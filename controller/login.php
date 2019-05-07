@@ -6,9 +6,6 @@ if (isset($_POST["login"])) {
         // 入力したユーザIDを格納
         $email = $_POST["email"];
 
-        // 2. ユーザIDとパスワードが入力されていたら認証する
-
-        // 3. エラー処理
         $pdo = connect();
 
         $where = 'email = :email AND active = :active';
@@ -17,12 +14,14 @@ if (isset($_POST["login"])) {
             'email' => $email,
             'active' => ENABLED,
         ];
-
+        
+        // メールアドレスからデータを取得
         $user = selectOne($pdo, '*', 'user', $where, $params);
 
         $password = $_POST["password"];
 
         if ($user) {
+            // 入力されたパスワードが正しいかチェックする
             if (password_verify($password, $user['password'])) {
                 session_regenerate_id(true);
 
@@ -37,7 +36,7 @@ if (isset($_POST["login"])) {
                 $error_message = 'Eメールアドレスあるいはパスワードに誤りがあります。';
             }
         } else {
-            // 該当データなし
+            // 
             $error_message = 'Eメールアドレスあるいはパスワードに誤りがあります。';
         }
     }
